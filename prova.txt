@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct aluno{
+	char CPF[13];
+	char nome[80];
+	int numaula; //regaula / trocar pra -1 se remover o aluno
+}aluno;
+
+typedef struct luta{
+	int regaula;
+	int qaluno;	//qntd de alunos
+	char modalidade[20];
+	int grau;	//iniciante, intermediario, avançado
+	float valor;
+}luta;
+
+void alocaAluno(aluno **p, int n);
+void regAluno(aluno *pa, luta *pl, int n);
+
+void alocaLuta(luta **p, int n);
+void regLuta(luta *p);
+
+void visualizarMod(luta *p);
+
+void encerrarMat(aluno *p, int n);
+
+int main()
+{
+	luta *pluta = NULL;
+	aluno *paluno = NULL;
+	
+	alocaLuta(&pluta, 9);
+	regLuta(pluta);
+	
+	int cont=0, i=0, op = 1;
+	
+	do
+	{
+		printf("Bem vindo, o que deseja fazer?\n\n[1] Matricular\n[2] Encerrar matricula\n[3] Sair\n\n");
+		scanf("%i", &op);
+		fflush(stdin);
+		switch(op)
+		{
+			case 1: //MATRICULA
+				regAluno(paluno, pluta, ++i);
+				cont++;
+				break;
+			case 2: //ENCERRAR MATRICULA
+				encerrarMat(paluno, op);
+				cont--;
+				break;
+			case 3: //SAIR
+				op = 0;
+				break;
+		}	
+	}while(op != 0);
+}
+
+void alocaAluno(aluno **p, int n)
+{
+	if((*p=(aluno*)realloc(*p, n*sizeof(aluno)))==NULL)
+	exit(1);
+}
+
+void regAluno(aluno *pa, luta *pl, int n)
+{
+	
+	visualizarMod(pl);
+	alocaAluno(&pa, n);
+	
+	int a, b, i, j;
+	char m1[] = "BJJ";
+	char m2[] = "JUDO";
+	char m3[] = "BOXE";
+	char m[5];
+	pa+=n;
+	
+	printf("\nDigite seu CPF: ");
+	gets(pa->CPF);
+	
+	printf("\nDigite seu nome: ");
+	gets(pa->nome);
+	
+	printf("\nEscolha uma modalidade (lista acima): ");
+	scanf("%i", &a);
+	fflush(stdin);
+	
+	printf("\nQual o seu grau?\n[1] Iniciante\n[2] Intermediario\n[3] Avancado\n\n");
+	scanf("%i", &b);
+	fflush(stdin);
+	
+	if(a==1)
+	strcpy(m, m1);
+	
+	else if(a==2)
+	strcpy(m, m2);
+	
+	else if(a==3);
+	strcpy(m, m3);
+	
+	for(i=0;i<3;i++, pl+=3)
+	{
+		if(strcmp(m, pl->modalidade)==0)
+			for(j=0, i=3;j<3;j++, pl++)
+				if(b==pl->grau)
+				{
+					
+					pa->numaula = pl->regaula;
+					pl->qaluno++;
+				}
+	}
+	
+	printf("\n\nInformacoes do aluno:\nCPF:%s\nNome:%s\nSala:%i\n\n", pa->CPF, pa->nome, pa->numaula);
+}
+
+void alocaLuta(luta **p, int n)
+{
+	if((*p=(luta*)realloc(*p, n*sizeof(luta)))==NULL)
+	exit(1);
+}
+
+void regLuta(luta *p)
+{
+	int i, j, reg=1;
+	char mod1[] = "BJJ";
+	char mod2[] = "JUDO";
+	char mod3[] = "BOXE";
+	 
+	for(i=0;i<3;i++, reg++)
+	{
+		if(i==0)
+		{
+			for(j=0;j<3;j++, p++, reg++)
+			{
+				strcpy(p->modalidade, mod1);
+				p->grau = j+1;
+				p->regaula = reg;
+				//printf("%s\n%i", p->modalidade, p->grau);
+			}
+		}
+		if(i==1)
+		{
+			for(j=0;j<3;j++, p++, reg++)
+			{
+				strcpy(p->modalidade, mod2);
+				p->grau = j+1;
+				p->regaula = reg;
+				//printf("%s\n%i", p->modalidade, p->grau);
+			}
+		}
+		if(i==2)
+		{
+			for(j=0;j<3;j++, p++, reg++)
+			{
+				strcpy(p->modalidade, mod3);
+				p->grau = j+1;
+				p->regaula = reg;
+				//printf("%s\n%i", p->modalidade, p->grau);
+			}
+		}
+	}
+}
+
+void visualizarMod(luta *p)
+{
+	int i;
+	printf("\tModalidades\n\n");
+	for(i=0;i<3;i++, p+=3)
+	printf("\t[%i] %s\n", i+1, p->modalidade);
+}
+
+void encerrarMat(aluno *pa, int n)
+{
+	int i;
+	char cpf[13];
+	printf("Digite o CPF a ser desmatriculado: ");
+	scanf("%s", &cpf);
+	for(i=0;i<n;i++, pa++)
+	{
+		if(strcmp(cpf, pa->CPF)==0)
+			pa->numaula = -1;
+	}
+}
